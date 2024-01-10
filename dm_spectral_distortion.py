@@ -14,8 +14,6 @@ from itertools import chain
 from colossus.cosmology import cosmology
 from colossus.utils import constants
 from collections import OrderedDict
-# import matplotlib.pyplot as plt
-# plt.style.use('~/Documents/mplstyle/colorscheme2.mplstyle')
 
 # mass unit = Msun/h
 # mass func unit = (h/Mpc)**3 in comoving coord
@@ -72,7 +70,7 @@ g10 = 3.                     # Ratio of triplet to singlet degeneracy factors
 
 # path1 = '/Users/anoma/Documents/paper1_code/cobe_quasar/COBE_data.txt'
 # path1 = '/Users/anoma/Documents/paper2_code/cobe_zoo/cobe_mcmc/COBE_data.txt'
-path1 = '/home/anoma/cobe_zoo_mcmc/COBE_data.txt'
+path1 = 'COBE_data.txt'
 data_cobe = np.genfromtxt(path1).T
 
 freq = data_cobe[0]*c*1.E-9  #cm-1 to GHz
@@ -186,10 +184,7 @@ def n10(T, T_star):
         return 0.
     
 def n01(T, T_star):
-    # if T>0.:
         return (1/g10)*np.exp(T_star/T)
-    # else:
-    #     return (1/g10)*1.e20
     
 # DM collisional coupling
 def C10(z, mdm, a1, beta, Tdm):
@@ -273,8 +268,6 @@ def Rdmb_is(z, T, T_star, mdm, epsdm):
     if kbev*Tcmb(z)*1.e-6>0.5/20:
         mt = meve*1.E6/(kbev*Tcmb(z))
         f_np = lambda x: 4*np.pi*2*(kb*Tcmb(z)/(c*hp))**3*x**2*1/(np.exp(np.sqrt(x**2+mt**2))+1) if (np.sqrt(x**2+mt**2)<50) else 4*np.pi*2*(kb*Tcmb(z)/(c*hp))**3*x**2*np.exp(-np.sqrt(x**2))
-        # e_np = lambda x: 4*np.pi*g*np.log(2*x*kbev*Tcmb(z)/(mdm*1.e6/Mev))*(kb*Tcmb(z)/(c*hp))**3*x**3*1/(np.exp(np.sqrt(x**2+mt**2))-1) if (np.sqrt(x**2+mt**2)<50) else \
-        # 4*np.pi*g*np.log(2*x*kbev*Tcmb(z)/(mdm*1.e6/Mev))*(kb*Tcmb(z)/(c*hp))**3*x**2*np.exp(-np.sqrt(x**2))
         f_e = integrate.quad(f_np, T_star/Tcmb(z), 1.E4, limit = 100000, epsrel=1.e-8)[0]/integrate.quad(f_np, 0., 1.E4, limit = 100000, epsrel=1.e-8)[0]
     else:
         f_e = fnr_ei
@@ -297,9 +290,6 @@ def Rdmb_is(z, T, T_star, mdm, epsdm):
 def Edmb(z, T, T_star, mdm, alpha_A):
     mevdm = (mdm/Mev)
     epsdm = np.sqrt(alpha_A*(0.068/T_star)**3*(mevdm/0.5)**2)
-    # if T_star>Tcmb(z):
-    #     return Rdmb_es(z, T, mdm, epsdm)/((3./2.)*H_z(z))
-    # else:
     return Rdmb_is(z, T, T_star, mdm, epsdm)/((3./2.)*H_z(z))
 
 # Energy exchange from CMB to DM
@@ -338,7 +328,7 @@ def ndot(z, T, T_star, mdm, alpha_A):
 
 # Reading electron, proton and ion fraction and gas temperature
 # path2 = '/Users/anoma/Documents/paper2_code/cobe_zoo/cobe_mcmc/rec.txt'
-path2 = '/home/anoma/cobe_zoo_mcmc/rec.txt'
+path2 = 'rec.txt'
 data2 = np.genfromtxt(path2, skip_header=4).T
 
 x0 = data2[0] #z
@@ -366,7 +356,7 @@ Tgint = interpolate.interp1d(x0, x4)
 
 # Reading the gaunt factors
 # path3 = '/Users/anoma/Documents/paper2_code/cobe_zoo/cobe_mcmc/gaunt_factors.txt'
-path3 = '/home/anoma/cobe_zoo_mcmc/gaunt_factors.txt'
+path3 = 'gaunt_factors.txt'
 data3 = np.genfromtxt(path3, skip_header=1).T
 xval = data3[0]
 yval = data3[1]
@@ -451,17 +441,6 @@ def pp_rate2(z, qdm, mdm):
 def pp_rate3(z, qdm, mdm):
     rdm = alpha*hp/(2*np.pi*mdm*c)
     sigma_pp = np.pi*rdm**2
-    # g = 2
-    # lim = 13.4*(mdm*1.e6/Mev)/(2*kbev*Tcmb(z))
-    # mt = 0 #me_ev/(kbev*Tcmb(z))
-    # f_np = lambda x: 4*np.pi*g*(kb*Tcmb(z)/(c*hp))**3*x**2*1/(np.exp(np.sqrt(x**2+mt**2))-1) if (np.sqrt(x**2+mt**2)<50) else 4*np.pi*g*(kb*Tcmb(z)/(c*hp))**3*x**2*np.exp(-np.sqrt(x**2))
-    # e_np = lambda x: 4*np.pi*g*np.log(2*x*kbev*Tcmb(z)/(mdm*1.e6/Mev))*(kb*Tcmb(z)/(c*hp))**3*x**3*1/(np.exp(np.sqrt(x**2+mt**2))-1) if (np.sqrt(x**2+mt**2)<50) else \
-    #     4*np.pi*g*np.log(2*x*kbev*Tcmb(z)/(mdm*1.e6/Mev))*(kb*Tcmb(z)/(c*hp))**3*x**2*np.exp(-np.sqrt(x**2))
-
-    # npp = integrate.quad(f_np, lim, 1.E4, limit = 100000, epsrel=1.e-8)
-    # epp = integrate.quad(e_np, lim, 1.E4, limit = 100000, epsrel=1.e-8)
-    # # sigma_pp2 = alpha*qdm**4*rdm**2*((28/9)*np.log(2*kbev*Tcmb(z)/(mdm*1.e6/Mev))-218/27)
-    # # if sigma_pp>0:
     return (vne(z)*sigma_pp*c)
     
 def edm_prod(z, qdm, mdm):
@@ -701,10 +680,6 @@ def dm_signal(f, T_star, mdm, eps, a1, beta):
                         ydm_par = 0.
                     else:
                         mudm_par, ydm_par = u_dm(mdm, T_star, zumin, zumax)
-                    # print(10**zumin, 10**zumax, 'Tex = TCMB')
-
-                    # muplusysignal = (mudm_par+mu_i)*(-T_0/xf)*dBdT(f) + (ydm_par+y_i)*T_0*(xf*(np.exp(xf)+1)/(np.exp(xf)-1)-4)*dBdT(f) 
-                    # return (muplusysignal, np.zeros(f.shape)) #no global signal
                     return (initial_rates, (mudm_par+mu_i, 0.), (ydm_par+y_i, 0.)) #(np.zeros(f.shape), np.zeros(f.shape)) #no signal
                 else: 
                 # collisions < radiative transitions near Hubble
@@ -729,9 +704,6 @@ def dm_signal(f, T_star, mdm, eps, a1, beta):
                             break
         elif ah>1 and ch<1:
             if ah>1.e5 and ca<1.e-5: # A>1000C and A>1000H: radiation dominates fully and mu+y distortion contributes to u 
-                    # if zmax > z_bb:
-                    #    zumax = z_bb
-                    # else:
                     zumax = zmax
                     
                     zm1, zm2 = zdmmin(T_star, mdm, A10dm, a1, beta)
@@ -751,11 +723,7 @@ def dm_signal(f, T_star, mdm, eps, a1, beta):
                         ydm_par = 0.
                     else:
                         mudm_par, ydm_par = u_dm(mdm, T_star, zumin, zumax)
-                    # print(10**zumin, 10**zumax, 'Tex = TCMB')
-
-                    # muplusysignal = (mudm_par+mu_i)*(-T_0/xf)*dBdT(f) + (ydm_par+y_i)*T_0*(xf*(np.exp(xf)+1)/(np.exp(xf)-1)-4)*dBdT(f) 
-                    # return (muplusysignal, np.zeros(f.shape)) #no global signal
-                    return (initial_rates, (mudm_par+mu_i, 0.), (ydm_par+y_i, 0.)) #(np.zeros(f.shape), np.zeros(f.shape)) #no signal
+                    return (initial_rates, (mudm_par+mu_i, 0.), (ydm_par+y_i, 0.)) 
             else:
                 # radiative transitions > collisions ... comparable rates
                 zc = zmax
@@ -828,7 +796,7 @@ def dm_signal(f, T_star, mdm, eps, a1, beta):
                 if ah>1.e4 and ca<1.e-4 and zc0<z_c: # A>1000C and A>1000H: radiation dominates fully no signal
                     break
 
-        # T_dmint = interpolate.interp1d(flatten_list(z_arr), flatten_list(Tdm_arr), kind='linear')
+      
         if len(z_arr)==0:
             print(ah, ch, ca)
             print('problem!')
@@ -838,7 +806,7 @@ def dm_signal(f, T_star, mdm, eps, a1, beta):
             T_exint = interpolate.interp1d(flat_z , flat_Tex, kind='cubic')
 
 ################################ mu/y signal ###########################
-        # xf = hp*f*1.E9/(kb*T_0)
+      
         f_mu = lambda zd: (1.4005704)*(10**zd)/(H_z(zd)*(1+10**zd)*np.log10(np.exp(1)))*((edot(zd, T_exint(zd), T_star, mdm, alpha_A)/epl(zd))\
                     -(4./3.)*np.exp(xc(zd))*np.exp(-xc(zd)/xcmb(zd, T_star))*(ndot(zd, T_exint(zd), T_star, mdm, alpha_A)/npl(zd))) \
                     if xcmb(zd, T_star)>1 else (1.4005704)*(10**zd)/(H_z(zd)*(1+10**zd)*np.log10(np.exp(1)))*((edot(zd, T_exint(zd), T_star, mdm, alpha_A)/epl(zd))\
@@ -927,413 +895,3 @@ with open(file, 'w') as f:
             f.write('%E\t'%y[1])
             f.write('%E\n'%delEbyE)
 
-
-
-
-
-
-
-
-
-
-        # print(zdmmin(delE2/kbev, mdm_p*Mev, alpha_A, a1))
-        # return (initial_rates, mu_dm, y_dm) 
-        # if ah>1 and ch>1:   # collisions and radiative transitions above hubble
-        #     if ca>1:        # collisions > radiative transitions
-        #         if ca>1.e4 and ch>1.e4: # collisions >> radiative transitions and collisions >> Hubble
-        #             while(zmax-1>=np.log10(zmin)):
-        #                 teval = np.linspace(np.log10(10**zmax), np.log10(10**(zmax-0.01)), num=4)
-        #                 solution = Tdm_solver(T_star, mdm, alpha_A, a1, teval, Tdm)
-        #                 z_arr.append(solution.values.t)
-        #                 ysol = solution.values.y
-        #                 Tex_arr.append(ysol[:,0])
-        #                 Tdm_arr.append(ysol[:,0])
-        #                 Tex = Tex_arr[-1][-1]
-        #                 Tdm = Tdm_arr[-1][-1]
-        #                 zmax = z_arr[-1][-1]
-        #                 ch, ah, ca = Rcomp(zmax, mdm, a1, A10dm, beta, Tdm, T_star, Tex)
-        #                 if ca<1.e4 and ch<1.e4: # C and A start becoming comparable
-        #                     break
-        #         # collisions > radiative transitions ... comparable rates
-        #         zc = zmax
-        #         zc0 = zmax
-        #         while(zc-1>=np.log10(zmin)):
-        #             teval = np.linspace(np.log10(10**zc), np.log10(10**(zc-1.)), num=100) #evaluation points in redshift for T_ex
-        #             solution = Tex_solver(T_star, mdm, alpha_A, a1, beta, teval, Tdm, Tex)
-        #             z_arr.append(solution.values.t)
-        #             Tex_arr.append(solution.values.y[:,0])
-        #             Tdm_arr.append(solution.values.y[:,1])
-        #             zc = z_arr[-1][-1]
-        #             Tdm = Tdm_arr[-1][-1]
-        #             Tex = Tex_arr[-1][-1]
-        #             if abs(zc - zc0)/zc <=1.e-15:
-        #                 zc = zc-0.001
-        #             ch, ah, ca = Rcomp(zc, mdm, a1, A10dm, beta, Tdm, T_star, Tex)
-        #             zc0 = z_arr[-1][-1]
-        #             if ah>1.e4 and ca<1.e-4 and zc0<z_c: # A>1000C and A>1000H: radiation dominates fully no signal
-        #                 break
-        #     else: # ca<1  collisions < radiative transitions
-        #         if ah>1.e4 and ca<1.e-4: # A>1000C and A>1000H: radiation dominates fully no signal
-        #             print('Tex = TCMB')
-        #             return (initial_rates, (0., 0.), (0., 0.)) #(np.zeros(f.shape), np.zeros(f.shape)) #no signal
-        #         else: 
-        #         # collisions < radiative transitions near Hubble
-        #             zc = zmax
-        #             zc0 = zmax
-        #             while(zc-1>=np.log10(zmin)):
-        #                 teval = np.linspace(np.log10(10**zc), np.log10(10**(zc-1.)), num=100) #evaluation points in redshift for T_ex
-        #                 solution = Tex_solver(T_star, mdm, alpha_A, a1, beta, teval, Tdm, Tex)
-        #                 z_arr.append(solution.values.t)
-        #                 Tex_arr.append(solution.values.y[:,0])
-        #                 Tdm_arr.append(solution.values.y[:,1])
-        #                 zc = z_arr[-1][-1]
-        #                 Tdm = Tdm_arr[-1][-1]
-        #                 Tex = Tex_arr[-1][-1]
-        #                 if abs(zc - zc0)/zc <=1.e-15:
-        #                     zc = zc-0.001
-        #                 ch, ah, ca = Rcomp(zc, mdm, a1, A10dm, beta, Tdm, T_star, Tex)
-        #                 zc0 = z_arr[-1][-1]
-        #                 if ah>1.e4 and ca<1.e-4 and zc0<z_c: # A>1000C and A>1000H: radiation dominates fully no signal
-        #                     break
-        # elif ah>1 and ch<1:
-        #     if ah>1.e4 and ca<1.e-4: # A>1000C and A>1000H: radiation dominates fully no signal
-        #         print('Tex = TCMB')
-        #         return (initial_rates, (0., 0.), (0., 0.)) #(np.zeros(f.shape), np.zeros(f.shape)) #no signal
-        #     else:
-        #         # radiative transitions > collisions ... comparable rates
-        #         zc = zmax
-        #         zc0 = zmax
-        #         while(zc-1>=np.log10(zmin)):
-        #             teval = np.linspace(np.log10(10**zc), np.log10(10**(zc-1.)), num=100) #evaluation points in redshift for T_ex
-        #             solution = Tex_solver(T_star, mdm, alpha_A, a1, beta, teval, Tdm, Tex)
-        #             z_arr.append(solution.values.t)
-        #             Tex_arr.append(solution.values.y[:,0])
-        #             Tdm_arr.append(solution.values.y[:,1])
-        #             zc = z_arr[-1][-1]
-        #             Tdm = Tdm_arr[-1][-1]
-        #             Tex = Tex_arr[-1][-1]
-        #             if abs(zc - zc0)/zc <=1.e-15:
-        #                 zc = zc-0.001
-        #             ch, ah, ca = Rcomp(zc, mdm, a1, A10dm, beta, Tdm, T_star, Tex)
-        #             zc0 = z_arr[-1][-1]
-        #             if ah>1.e4 and ca<1.e-4 and zc0<z_c: # A>1000C and A>1000H: radiation dominates fully no signal
-        #                 break
-        # elif ah<1 and ch>1:
-        #     if ch>1.e4 and ca>1.e4: # collisions >> Hubble and collisions >> radiative transitions
-        #         while(zmax-1>=np.log10(zmin)):
-        #             teval = np.linspace(np.log10(10**zmax), np.log10(10**(zmax-0.01)), num=4)
-        #             solution = Tdm_solver(T_star, mdm, alpha_A, a1, teval, Tdm)
-        #             z_arr.append(solution.values.t)
-        #             ysol = solution.values.y
-        #             Tex_arr.append(ysol[:,0])
-        #             Tdm_arr.append(ysol[:,0])
-        #             Tex = Tex_arr[-1][-1]
-        #             Tdm = Tdm_arr[-1][-1]
-        #             zmax = z_arr[-1][-1]
-        #             ch, ah, ca = Rcomp(zmax, mdm, a1, A10dm, beta, Tdm, T_star, Tex)
-        #             if ch<1.e4 and ca<1.e4: # C and A start becoming comparable
-        #                 break
-        #     # collisions > Hubble and rad transitions < Hubble ... comparable rates
-        #     zc = zmax
-        #     zc0 = zmax
-        #     while(zc-1>=np.log10(zmin)):
-        #         teval = np.linspace(np.log10(10**zc), np.log10(10**(zc-1.)), num=100) #evaluation points in redshift for T_ex
-        #         solution = Tex_solver(T_star, mdm, alpha_A, a1, beta, teval, Tdm, Tex)
-        #         z_arr.append(solution.values.t)
-        #         Tex_arr.append(solution.values.y[:,0])
-        #         Tdm_arr.append(solution.values.y[:,1])
-        #         zc = z_arr[-1][-1]
-        #         Tdm = Tdm_arr[-1][-1]
-        #         Tex = Tex_arr[-1][-1]
-        #         if abs(zc - zc0)/zc <=1.e-15:
-        #             zc = zc-0.001
-        #         ch, ah, ca = Rcomp(zc, mdm, a1, A10dm, beta, Tdm, T_star, Tex)
-        #         zc0 = z_arr[-1][-1]
-        #         if ah>1.e4 and ca<1.e-4 and zc0<z_c: # A>1000C and A>1000H: radiation dominates fully no signal
-        #             break
-        # else: # ah<1 and ch<1
-        #     # collisions, rad transitions, Hubble ... comparable rates
-        #     zc = zmax
-#             zc0 = zmax
-#             while(zc-1>=np.log10(zmin)):
-#                 teval = np.linspace(np.log10(10**zc), np.log10(10**(zc-1.)), num=100) #evaluation points in redshift for T_ex
-#                 solution = Tex_solver(T_star, mdm, alpha_A, a1, beta, teval, Tdm, Tex)
-#                 z_arr.append(solution.values.t)
-#                 Tex_arr.append(solution.values.y[:,0])
-#                 Tdm_arr.append(solution.values.y[:,1])
-#                 zc = z_arr[-1][-1]
-#                 Tdm = Tdm_arr[-1][-1]
-#                 Tex = Tex_arr[-1][-1]
-#                 if abs(zc - zc0)/zc <=1.e-15:
-#                     zc = zc-0.001
-#                 ch, ah, ca = Rcomp(zc, mdm, a1, A10dm, beta, Tdm, T_star, Tex)
-#                 zc0 = z_arr[-1][-1]
-#                 if ah>1.e4 and ca<1.e-4 and zc0<z_c: # A>1000C and A>1000H: radiation dominates fully no signal
-#                     break
-
-#         # T_dmint = interpolate.interp1d(flatten_list(z_arr), flatten_list(Tdm_arr), kind='linear')
-#         if len(z_arr)==0:
-#             print(ah, ch, ca)
-#             print('problem!')
-#             return (initial_rates, (2., 2.), (2., 2.)) #(np.zeros(f.shape), np.zeros(f.shape))
-#         else:
-#             flat_z, flat_Tex = flatten_list(z_arr, Tex_arr)
-#             # print(flat_z.shape)
-#             # flat_Tex = flatten_list(Tex_arr)
-#             # print(flat_Tex.shape)
-#             # flat_Tdm = flatten_list(Tdm_arr)
-#             #print(flat_z, flat_Tex) #, 
-#             #print(np.unique(flat_z).shape, flat_z.shape)
-#             T_exint = interpolate.interp1d(flat_z, flat_Tex, kind='quadratic') #, assume_sorted=True)
-
-# ################################ mu/y signal ###########################
-#         # xf = hp*f*1.E9/(kb*T_0)
-#         f_mu = lambda zd: (1.4005704)*(10**zd)/(H_z(zd)*(1+10**zd)*np.log10(np.exp(1)))*((edot(zd, T_exint(zd), T_star, mdm, alpha_A)/epl(zd))\
-#                     -(4./3.)*np.exp(xc(zd))*np.exp(-xc(zd)/xcmb(zd, T_star))*(ndot(zd, T_exint(zd), T_star, mdm, alpha_A)/npl(zd))) \
-        #             if xcmb(zd, T_star)>1 else (1.4005704)*(10**zd)/(H_z(zd)*(1+10**zd)*np.log10(np.exp(1)))*((edot(zd, T_exint(zd), T_star, mdm, alpha_A)/epl(zd))\
-        #             -(4./3.)*(ndot(zd, T_exint(zd), T_star, mdm, alpha_A)/npl(zd)))
-         
-        # if flat_z[0]>z_bb:
-        #     zmu_max = z_bb
-        # else:
-        #     zmu_max = flat_z[0]
-        
-        # if zmu_max>z_c and flat_z[-1]<z_c:
-        #     zmu_min = z_c
-        # elif zmu_max>flat_z[-1] and flat_z[-1]>z_c:
-        #     zmu_min = flat_z[-1]
-        # else:
-        #     zmu_max = 0.
-        #     zmu_min = 0.
-
-        # if zmu_max == zmu_min:
-        #     mu_dm = (0., 0.)
-        # else:
-        #     # print(zmu_min , zmu_max)
-        #     mu_dm = integrate.quad(f_mu, zmu_min, zmu_max, limit=1000000, epsrel=1.e-12)
-        
-        # f_y = lambda zd: (0.25)*10**zd/(H_z(zd)*(1+10**zd)*np.log10(np.exp(1)))*(edot(zd, T_exint(zd), T_star, mdm, alpha_A)/epl(zd))
-        # zb_min = np.log10(zbmin(T_star))
-
-        # if flat_z[0]>z_c:
-        #     zy_max = z_c
-        # else:
-        #     zy_max = flat_z[0]
-        
-        # if zy_max>zb_min and flat_z[-1]<zb_min:
-        #     zy_min = zb_min
-        # elif zy_max>flat_z[-1] and flat_z[-1]>zb_min:
-        #     zy_min = flat_z[-1]
-        # else:
-        #     zy_max = 0.
-        #     zy_min = 0.
-
-        # if zy_max == zy_min or zb_min==0:
-        #     y_dm = (0., 0.)
-        # else:
-        #     y_dm = integrate.quad(f_y, zy_min, zy_max, limit = 1000000, epsrel=1.e-12)
-        # return (initial_rates, mu_dm, y_dm) 
-
-# ############## global signal ###########################
-#         if T_starmin<=T_star<=T_starmax:
-#             zf = np.log10(invert1(f, T_star))
-#             T_exgs = np.zeros(len(zf))
-#             global_signal = np.zeros(len(zf))
-#             print(zf)
-#             for i in range(len(zf)):
-#                 if zf[i]>flatten_list(z_arr)[0] or zf[i]<flatten_list(z_arr)[-1]: # or T_exgs[i]>Tcmb(zf[i]):
-#                     T_exgs[i] = Tcmb(zf[i])
-#                     global_signal[i] = 0
-#                 else:
-#                     T_exgs[i] = T_exint(zf[i])
-#                     # print((T_exgs[i]-Tcmb(zf[i]))/Tcmb(zf[i]))
-#                     global_signal[i] = (2*kb*(f[i]*1.E-1/(c*1.E-10))**2)*Tdb(zf[i], T_exgs[i], T_star, mdm, alpha_A)*1.E20
-#         else:
-#             global_signal = np.zeros(f.shape)
-
-#         return  (global_signal, muplusysignal)
-#         return  (global_signal, muplusysignal, shift_signal, flatten_list(z_arr), flatten_list(Tex_arr), flatten_list(Tdm_arr), zdec)
-
-# ax.set_ylabel(r'$\epsilon$')
-# ax.set_xlabel('Redshift')
-# # ax.plot(10**ze_arr, veps_zdecal(ze_arr, 100/kbev, 0.1*Mev), label='0.1 MeV')
-# # ax.plot(10**ze_arr, veps_zdecal(ze_arr, 100/kbev, 10*Mev), label='10 MeV')
-# # ax.plot(10**ze_arr, vec_nelectron(ze_arr, 0.1), label='f=20')    
-
-# ax.set_yscale('log')
-# ax.set_xscale('log')
-# plt.legend()
-
-# fig, ax = plt.subplots(figsize=(7, 6))
-# ze_arr = np.log10(np.logspace(10, 7.5, 50))
-# # ax.plot(10**ze_arr, vec_nelectron(ze_arr, 10), label='n_e')    
-# ax.plot(10**ze_arr, vec_ne(ze_arr)/npl(ze_arr))
-# # ax.plot(10**ze_arr, nerel(ze_arr)/npl(ze_arr))
-
-# ax.vlines(x = 0.5*1.E6/(20*2.725*(kbev)), ymin=0, ymax=1, label='0.025 MeV line', linestyles='dashed')
-
-# # ax.plot(eps_Edmb(epsdm, z, T, T_star, mdm))
-# # ax.plot(10**ze_arr, veps_zdecal(ze_arr, 0.01/kbev, 0.1*Mev), label='0.1 MeV')
-# # ax.plot(10**ze_arr, veps_zdecal(ze_arr, 0.01/kbev, 100*Mev), label='10 MeV')
-# ax.set_ylabel(r'$n_{e+}+n_{e-}/n_{pl}$')
-# ax.set_xlabel('Redshift')
-# # ax.plot(10**ze_arr, veps_zdecal(ze_arr, 100/kbev, 0.1*Mev), label='0.1 MeV')
-# # ax.plot(10**ze_arr, veps_zdecal(ze_arr, 100/kbev, 10*Mev), label='10 MeV')
-# # ax.plot(10**ze_arr, vec_nelectron(ze_arr, 0.1), label='f=20')    
-
-# ax.set_yscale('log')
-# ax.set_xscale('log')
-# plt.legend()
-# plt.show()
-
-
-# print(vneplus(np.log10(4.25714E8)))
-# fig, ax = plt.subplots(figsize=(7, 6))
-# ze_arr = np.log10(np.logspace(11, 8, 50))
-# # ax.plot(10**ze_arr, vec_nelectron(ze_arr, 10), label='n_e')    
-# ax.plot(kbev*Tcmb(ze_arr)*1.e-3, vpprate(ze_arr, 1.E-3, 1.E-1*Mev), label=r'$\gamma\gamma \rightarrow q\bar{q}$')
-# ax.plot(kbev*Tcmb(ze_arr)*1.e-3, pp_rate2(ze_arr, 1.E-3, 1.E-1*Mev), label=r'$\gamma\gamma \rightarrow q\bar{q}$')
-
-# ax.plot(kbev*Tcmb(ze_arr)*1.e-3, vedm_prod(ze_arr, 1.E-3, 1.E-1*Mev), label=r'$e^+e^- \rightarrow q\bar{q}$')
-# ax.plot(kbev*Tcmb(ze_arr)*1.e-3, H_z(ze_arr), label='Hubble rate')
-# # ax.plot(10**ze_arr, nerel(ze_arr)/npl(ze_arr))
-
-# # ax.vlines(x = 1.E6/(2.725*(kbev)), ymin=0, ymax=1.E10, linestyle='dashed')
-# ax.vlines(x = 70, ymin=0, ymax=1.E10, linestyle='dotted', label='70 keV line')
-
-# # ax.plot(eps_Edmb(epsdm, z, T, T_star, mdm))
-# # ax.plot(10**ze_arr, veps_zdecal(ze_arr, 0.01/kbev, 0.1*Mev), label='0.1 MeV')
-# # ax.plot(10**ze_arr, veps_zdecal(ze_arr, 0.01/kbev, 100*Mev), label='10 MeV')
-# # ax.set_ylabel(r'$n_{e+}+n_{e-}/n_{pl}$')
-# ax.set_xlabel('Energy (keV)')
-# # ax.plot(10**ze_arr, veps_zdecal(ze_arr, 100/kbev, 0.1*Mev), label='0.1 MeV')
-# # ax.plot(10**ze_arr, veps_zdecal(ze_arr, 100/kbev, 10*Mev), label='10 MeV')
-# # ax.plot(10**ze_arr, vec_nelectron(ze_arr, 0.1), label='f=20')    
-
-# ax.set_yscale('log')
-# ax.set_xscale('log')
-# plt.legend()
-# plt.show()        
-
-
-# sd_arr = np.column_stack((epsarr[:i+1], mu_par[:i+1], y_par[:i+1]))
-
-# print(sd_arr)
-# print(i)
-# sd_path = '/Users/anoma/Documents/paper2_code/cobe_zoo/mu_y_dm/mdm_'+str(mdm_p)+'_MeV_del_E_'+str(delE_p)+'.txt'
-# np.savetxt(sd_path
-#            ,sd_arr
-#            ,header = 'DM mass='+str(mdm_p)+' MeV, Del E = '+str(delE_p)+' eV\nepsilon \t\t delta_E*\t\t mu param \t\t mu_err\t\t y param\t\t y_err\t\t delE/E'
-#            )
-
-# ztemp, muy = dm_signal(freq, delE_p/kbev, mdm_p*Mev, eps=epsarr, a1=2.0, beta=0.5)
-# # print(ztemp)
-# print(muy)
-# plt.plot(10**ztemp[0], ztemp[2], label='T_dm')
-# plt.plot(10**ztemp[0], Tcmb(ztemp[0]), label='T_cmb')
-# plt.plot(10**ztemp[0], ztemp[1], label='T_ex')
-
-# # plt.plot(ztemp[0], Tdmad(np.log10(ztemp[0]), zdecal(1.e-2/kbev, (10**-1)*Mev, eps=1.e-3)))
-# plt.xlabel(r'Redshift')
-# plt.ylabel(r'Temperature')
-# # # plt.plot(epsarr, abs(mupar))
-# # plt.ylabel(r'$\mu$')
-# # plt.xlabel(r'$\epsilon$')
-# plt.xscale('log')
-# plt.title(r'$m_\chi$=1 MeV, $\Delta$ E=0.01eV, $\epsilon$=$10^{-4}$')
-# plt.yscale('log')
-# plt.legend()
-# # plt.savefig('/Users/anoma/Documents/paper2_code/cobe_zoo/temp_evol_plots/t3n.pdf')
-# plt.show()
-
-# gs_dm = []
-# for i in range(0, epsarr.shape[0]):
-#     print(epsarr[i])
-#     gs_dm.append(dm_signal(freq, delE_p/kbev, mdm_p*Mev, eps=epsarr[i], a1=2, beta=0.5)[0])
-
-# print(gs_dm)
-# print(kbev*T_starmin, kbev*T_starmax)
-# print(np.min(freq)*1.E9*hp*kbev/kb)
-# print(np.max(freq)*1.E9*hp*kbev/kb)
-
-
-# DM model parameters
-# mdm_p = 1.E-1 #MeV
-# delE_p = T_starmax*kbev #eV
-# eps_p = 1.E-3
-
-# # dm_arr = dm_signal(freq, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=2.002, beta=0.5)
-
-# # # print(dm_arr)
-
-
-# # # freq2 = np.linspace(0.1, 600, 100)
-# fig, ax = plt.subplots(figsize=(7, 6))
-# # ax.plot(freq, dm_arr[0], label='global signal')
-
-# ax.set_title('eps=1.e-8')
-# dm_arr = dm_signal(freq, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=2.0, beta=0.5)
-
-# # ax.plot(freq, abs(dm_signal(freq, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=2.0, beta=0.5)[3]), label='mu+y signal')
-# # ax.plot(10**dm_arr[2], Tcmb(dm_arr[2]), label='Tcmb')
-# ax.plot(10**dm_arr[2], Tcmb(dm_arr[2]) - dm_arr[4], label='Tdm')
-# ax.plot(10**dm_arr[2], Tcmb(dm_arr[2])- dm_arr[3], label='Tex')
-# # ax.scatter(10**dm_arr[0], Tcmb(dm_arr[0])-dm_arr[1], label='Tcmb')
-
-
-# ax.set_xscale('log')
-# ax.set_yscale('log')
-
-# # ax.plot(freq2, dm_signal(freq2, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=2.00002, beta=0.5)[1], label='mu+y signal')
-# # # ax.plot(freq, dm_signal(freq, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=2.0, beta=0.5)[2], label='shift signal')
-# # ax.plot(freq, dm_arr[0], label='global signal')
-# # ax.plot(freq2, dm_signal(freq2, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=2.00002, beta=0.5)[0] + dm_signal(freq2, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=0.002, beta=0.5)[1], label='full signal')
-# # ax.plot(freq, dm_signal(freq, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=2, beta=0.5)[0] + dm_signal(freq, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=2, beta=0.5)[1]++ dm_signal(freq, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=2, beta=0.5)[2], label='full signal2')
-# plt.legend()
-# plt.show()
-# ax.set_yscale('log')
-
-
-# fig, ax = plt.subplots(figsize=(7, 6))
-# dm_arr = dm_signal(freq, delE_p/kbev, mdm_p*Mev, eps=eps_p, a1=0.02, beta=0.5)
-
-# ax.plot(10**dm_arr[3], dm_arr[5], label='T_dm')
-# ax.plot(10**dm_arr[3], Tcmb(dm_arr[3]), label='T_cmb')
-# ax.plot(10**dm_arr[3], dm_arr[4], label='T_ex')
-# ax.set_yscale('log')
-# ax.set_xscale('log')
-# plt.legend()
-# plt.show()
-
-
-
-# Calculating the final absorption signal
-# def model_signal(f, T_star, mdm, eps, a1, beta, delT, G0):
-#     dmsignal = dm_signal(f, T_star, mdm, eps, a1, beta)
-#     return dmsignal + (delT*dBdT(f) +  G0*galnu(f)) 
-
-
-# def log_likelihood(theta, x, y, yerr):
-#     Eps, a1, DelT, g0 = theta # parameters
-#     model = model_signal(x, delE/kbev, (10**mass_expo)*Mev, 10**Eps, 10**a1, 0.5, DelT, g0) ### change del E
-#     sigma2 = yerr**2 
-#     return -0.5 * np.sum((y - model) ** 2 / sigma2 + np.log(sigma2))
-
-# def log_prior(theta):  #log of prior if prob = 1 (log prob = 0) and prob = 0 (log prob = -inf)
-#     Eps, a1, DelT, g0 = theta # parameters
-#     if -7.0 <= Eps <= 1 and -2 <= a1 <= 2 and -1.e-3 <= DelT <= 1.e-3 and -1.0 <= g0 <= 1.0:
-#         zdec = zdecal(delE/kbev, (10**mass_expo)*Mev, 10**Eps) ##*****
-#         if zdec == 0:
-#             return -np.inf
-#         else:
-#             return 0.0
-#     else:
-#         return -np.inf
-
-# def log_probability(theta, x, y, yerr):
-#     lp = log_prior(theta)
-#     if not np.isfinite(lp):
-#         return -np.inf
-#     else:
-#         ll = log_likelihood(theta, x, y, yerr)
-#         return lp + ll
