@@ -601,9 +601,6 @@ def dm_signal(f, T_star, mdm, eps, a1, beta):
     if eps == 0. or a1==0:
         print('zero electric charge')
         return ((0., 0., 0.), (0., 0.), (0., 0.)) #(np.zeros(f.shape), np.zeros(f.shape)) #no signal
-    elif zdec==0.:
-        print('DM coupled after z_eq')
-        return ((10., 10., 10.), (10., 10.), (10., 10.)) # penalise??  (np.ones(f.shape), np.ones(f.shape)) #not allowed!
     else:
         # Range of z for T_ex evaluation 
         zmin = np.log10(z_hrec)
